@@ -304,7 +304,7 @@ def create_docx(annotations, filename):
     heading_cells = table.rows[0].cells
     heading_cells[1].text = 'Editor/Reviewer Comments'
     heading_cells[2].text = 'Response'
-    reviewer = "X"
+    reviewer = ""
     counter = 1
     for key, value in enumerate(annotations):
         if value.tagname == "Underline":
@@ -318,14 +318,20 @@ def create_docx(annotations, filename):
             row[0]._tc.get_or_add_tcPr().append(shading_elm_0)
             shading_elm_1 = parse_xml(r'<w:shd {} w:fill="000000"/>'.format(nsdecls('w')))
             merged._tc.get_or_add_tcPr().append(shading_elm_1)
-            reviewer = comment
+            if comment:
+                reviewer = comment
+            else:
+                reviewer = text
             counter = 1
         else:
             rawtext = value.gettext()
             text = " ".join(rawtext.strip().split()) if rawtext else ""
             comment = value.contents if value.contents else ""
             row = table.rows[key + 1].cells
-            row[0].text = "{}.{}".format(reviewer, counter)
+            if reviewer:
+                row[0].text = reviewer + "." + str(counter)
+            else:
+                row[0].text = str(counter)
             row[1].text = text
             row[2].text = comment
             counter += 1
