@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Extracts annotations from a PDF file in markdown format for use in revising.
+Extracts annotations from a PDF file to generate a response sheet for revision.
 """
 
 import sys, io, argparse, subprocess
