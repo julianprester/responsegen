@@ -337,6 +337,34 @@ def create_docx(annotations, filename):
             counter += 1
     document.save(filename)
 
+def create_md(annotations, filename):
+    with open(filename, "w", encoding='utf-8') as md_file:
+        md_file.write("| | Editor/Reviewer Comments | Response |\n")
+        md_file.write("| - | - | - |\n")
+        reviewer = ""
+        counter = 1
+        for key, value in enumerate(annotations):
+            if value.tagname == "Underline":
+                rawtext = value.gettext()
+                text = " ".join(rawtext.strip().split()) if rawtext else ""
+                comment = value.contents if value.contents else ""
+                md_file.write(f"| | **{text.capitalize()} comments** | |\n")
+                if comment:
+                    reviewer = comment
+                else:
+                    reviewer = text
+                counter = 1
+            else:
+                rawtext = value.gettext()
+                text = " ".join(rawtext.strip().split()) if rawtext else ""
+                comment = value.contents if value.contents else ""
+                if reviewer:
+                    md_file.write(f"| {reviewer}.{str(counter)} | {text} | {comment} |\n")
+                else:
+                    md_file.write(f"| {str(counter)} | {text} | {comment} |\n")
+                counter += 1
+
+
 def set_col_widths(table):
     widths = (Inches(0.32), Inches(4.5), Inches(4.5))
     for row in table.rows:
@@ -362,6 +390,7 @@ def main():
     for file in args.input:
         annots = process_file(file)
         create_docx(annots, file.name[:-4] + ".docx")
+        create_md(annots, file.name[:-4] + ".md")
     return 0
 
 

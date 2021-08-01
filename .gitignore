@@ -137,3 +137,5 @@ dmypy.json
 # Other
 *.pdf
 *.docx
+*.md
+!/README.md
