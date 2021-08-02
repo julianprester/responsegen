@@ -19,6 +19,7 @@ from docx import Document
 from docx.shared import Inches
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
+import csv
 
 pdfminer.settings.STRICT = False
 
@@ -364,6 +365,32 @@ def create_md(annotations, filename):
                     md_file.write(f"| {str(counter)} | {text} | {comment} |\n")
                 counter += 1
 
+def create_csv(annotations, filename):
+    with open(filename, "w", encoding='utf-8', newline='') as csv_file:
+        csvwriter = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+        csvwriter.writerow(['','Editor/Reviewer Comments', 'Response'])
+        reviewer = ""
+        counter = 1
+        for key, value in enumerate(annotations):
+            if value.tagname == "Underline":
+                rawtext = value.gettext()
+                text = " ".join(rawtext.strip().split()) if rawtext else ""
+                comment = value.contents if value.contents else ""
+                csvwriter.writerow(['', f'**{text.capitalize()} comments**', ''])
+                if comment:
+                    reviewer = comment
+                else:
+                    reviewer = text
+                counter = 1
+            else:
+                rawtext = value.gettext()
+                text = " ".join(rawtext.strip().split()) if rawtext else ""
+                comment = value.contents if value.contents else ""
+                if reviewer:
+                    csvwriter.writerow([f'{reviewer}.{str(counter)}', f'{text}', f'{comment}'])
+                else:
+                    csvwriter.writerow([f'{str(counter)}', f'{text}', f'{comment}'])
+                counter += 1
 
 def set_col_widths(table):
     widths = (Inches(0.32), Inches(4.5), Inches(4.5))
@@ -391,6 +418,7 @@ def main():
         annots = process_file(file)
         create_docx(annots, file.name[:-4] + ".docx")
         create_md(annots, file.name[:-4] + ".md")
+        create_csv(annots, file.name[:-4] + ".csv")
     return 0
 
 

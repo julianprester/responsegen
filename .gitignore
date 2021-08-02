@@ -139,3 +139,4 @@ dmypy.json
 *.docx
 *.md
 !/README.md
+*.csv
