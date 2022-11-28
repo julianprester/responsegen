@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "responsegen"
+version = "0.1.0"
+description = ""
+authors = ["Julian Prester <julian@julianprester.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-docx = "^0.8.11"
+pdfminer-six = "^20221105"
+
+
+[tool.poetry.group.dev.dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
