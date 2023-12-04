@@ -13,19 +13,24 @@ When receiving a review package, I typically create a tabulated response sheet r
 I copy and paste reviewers' comments from my email client or PDF reader into a Word table, which serves as a resource for discussion with co-authors and issue tracker.
 When I've finished reading the paper, I use this script to convert the annotations to table in a Word document.
 
+## Setup
+
+```
+pip install responsegen
+```
+
 ## Usage
 
 ```
-usage: responsegen.py [-h] [-n COLS] INFILE [INFILE ...]
+Usage: responsegen [OPTIONS] FILE
 
-Extracts annotations from a PDF file in markdown format for use in revising.
+  Extracts annotations from a PDF file for use in creating a response sheet to
+  an academic paper revision.
 
-positional arguments:
-  INFILE                PDF files to process
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -n COLS, --cols COLS  number of columns per page in the document (default: 2)
+Options:
+  -f, --format TEXT  choose file format (csv, md, docx)
+  -o, --output TEXT  output file to write to
+  --help             Show this message and exit.
 ```
 
 ## Roadmap
@@ -36,7 +41,7 @@ See the [open issues](https://github.com/julianprester/responsegen/issues) for a
 
 - [Python](https://www.python.org/)
 - [Poetry](https://python-poetry.org/)
-- [pdfminer.six](https://pdfminersix.readthedocs.io/en/latest/)
+- [PyMuPDF](https://github.com/pymupdf/PyMuPDF/)
 - [python-docx](https://python-docx.readthedocs.io/en/latest/)
 
 ## Support
