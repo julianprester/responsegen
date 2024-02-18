@@ -1,20 +1,18 @@
-[tool.poetry]
+[project]
 name = "responsegen"
-version = "0.1.0"
-description = ""
-authors = ["Julian Prester <julian@julianprester.com>"]
-license = "MIT"
+version = "0.1"
+description = "Generate response sheets for academic paper revisions based on highlighted pdfs."
+authors = [{name = "Julian Prester", email = "hi@julianprester.com"}]
 readme = "README.md"
+dependencies = [
+  "pymupdf",
+  "click",
+  "python-docx",
+  "pydantic"
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 responsegen = "responsegen.cli:main"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-python-docx = "^0.8.11"
-pymupdf = "^1.21.1"
-click = "^8.1.3"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools]
+packages = ["responsegen"]
