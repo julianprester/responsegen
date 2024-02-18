@@ -1,6 +1,7 @@
 import csv
 from docx import Document
 from docx.shared import Inches
+import fitz
 
 def export(highlights, filename, format):
     if format == "docx":
@@ -17,7 +18,7 @@ def export_csv(highlights, filename):
         reviewer = ""
         counter = 0
         for highlight in highlights:
-            if highlight.type == "Underline":
+            if highlight.type == fitz.PDF_ANNOT_UNDERLINE:
                 reviewer = highlight.comment if highlight.comment else highlight.text
                 reviewer += "."
                 counter = 0
@@ -31,7 +32,7 @@ def export_md(highlights, filename):
         reviewer = ""
         counter = 0
         for highlight in highlights:
-            if highlight.type == "Underline":
+            if highlight.type == fitz.PDF_ANNOT_UNDERLINE:
                 reviewer = highlight.comment if highlight.comment else highlight.text
                 reviewer += "."
                 counter = 0
@@ -52,7 +53,7 @@ def export_docx(highlights, filename):
     reviewer = ""
     counter = 0
     for key, highlight in enumerate(highlights):
-        if highlight.type == "Underline":
+        if highlight.type == fitz.PDF_ANNOT_UNDERLINE:
             reviewer = highlight.comment if highlight.comment else highlight.text
             reviewer += "."
             counter = 0

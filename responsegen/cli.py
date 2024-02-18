@@ -1,7 +1,7 @@
 import click
 
-from extract import extract_highlights
-from export import export
+from responsegen.extract import extract_highlights
+from responsegen.export import export
 
 @click.command()
 @click.option('-f', '--format', default="docx", help='choose file format (csv, md, docx)')

@@ -1,29 +1,49 @@
 import fitz
-from highlight import Highlight
+from datetime import datetime
+from responsegen.highlight import Highlight
 
+fitz.TOOLS.set_small_glyph_heights(True)
+
+SUBSTITUTIONS = {
+    u'ﬀ': 'ff',
+    u'ﬁ': 'fi',
+    u'ﬂ': 'fl',
+    u'ﬃ': 'ffi',
+    u'ﬄ': 'ffl',
+    u'‘': "'",
+    u'’': "'",
+    u'“': '"',
+    u'”': '"',
+    u'…': '...',
+}
 
 def extract_highlights(file_name):
     doc = fitz.open(file_name)
     highlights = []
     for page in doc:
         for annot in page.annots(types=[fitz.PDF_ANNOT_HIGHLIGHT, fitz.PDF_ANNOT_UNDERLINE]):
-            min_y, min_x = sorted(annot.vertices)[0]
             highlight = extract_annotation(annot, page)
-            highlights.append(Highlight(annot.info["id"], annot.info["subject"], highlight, annot.info["content"], annot.info["title"], page.number+1, min_x, min_y))
+            highlights.append(highlight)
     doc.close()
-    sortedHighlights = sorted(highlights, key=lambda highlight: (highlight.page, highlight.x, highlight.y))
+    sortedHighlights = sorted(highlights, key=lambda highlight: (highlight.page, highlight.y, highlight.x))
     return sortedHighlights
 
 def extract_annotation(annot, page):
-    highlights = []
-    for i in range(0, len(annot.vertices), 4):
-        r = fitz.Quad(annot.vertices[i : i + 4]).rect
-        rcX, rcY = (r.x0 + r.width / 2), (r.y0 + r.height / 2)
-        m = fitz.Matrix(1, 0, 0, 1, -rcX, -rcY)
-        m.concat(m, fitz.Matrix(1.01, 1.01))
-        m.concat(m, fitz.Matrix(1, 0, 0, 1, rcX, rcY))
-
-        r = r.transform(m)
-
-        highlights.append(page.get_textbox(r))
-    return ' '.join(highlights)
+    quad_count = int(len(annot.vertices) / 4)
+    sentences = ["" for i in range(quad_count)]
+    for i in range(quad_count):
+        points = annot.vertices[i * 4 : i * 4 + 4]
+        sentences[i] = page.get_text(clip=fitz.Quad(points).rect + (-1, 0, 1, 0))
+    sentences = " ".join(sentences)
+    sentences = ''.join([SUBSTITUTIONS.get(c, c) for c in sentences.strip()])
+    sentences = sentences.replace("\n ", " ")
+    return Highlight(
+        type=annot.type[0],
+        text=sentences,
+        comment=annot.info["content"],
+        author=annot.info["title"],
+        date=datetime.strptime(annot.info["modDate"][2:-1], '%Y%m%d%H%M%S'),
+        page=page.number+1,
+        x=sorted(annot.vertices)[0][0],
+        y=sorted(annot.vertices)[0][1]
+    )
