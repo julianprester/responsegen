@@ -1,5 +1,5 @@
 import fitz
-from datetime import datetime
+from datetime import datetime, timedelta
 from responsegen.highlight import Highlight
 
 fitz.TOOLS.set_small_glyph_heights(True)
@@ -37,12 +37,22 @@ def extract_annotation(annot, page):
     sentences = " ".join(sentences)
     sentences = ''.join([SUBSTITUTIONS.get(c, c) for c in sentences.strip()])
     sentences = sentences.replace("\n ", " ")
+
+    date_string = annot.info["modDate"][2:]
+    if "+" in date_string:
+        date_part, _ = date_string.split('+')
+    elif "-" in date_string:
+        date_part, _ = date_string.split('-')
+    elif "Z" in date_string:
+        date_part, _ = date_string.split('Z')
+    date = datetime.strptime(date_part, "%Y%m%d%H%M%S")
+
     return Highlight(
         type=annot.type[0],
         text=sentences,
         comment=annot.info["content"],
         author=annot.info["title"],
-        date=datetime.strptime(annot.info["modDate"][2:-1], '%Y%m%d%H%M%S'),
+        date=date,
         page=page.number+1,
         x=sorted(annot.vertices)[0][0],
         y=sorted(annot.vertices)[0][1]

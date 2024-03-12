@@ -11,8 +11,8 @@ class Highlight(BaseModel):
     author: str
     date: datetime
     page: int
-    x: int
-    y: int
+    x: float
+    y: float
 
     def to_csv(self, numbering):
         if self.type == fitz.PDF_ANNOT_HIGHLIGHT:
